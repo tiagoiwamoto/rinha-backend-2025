@@ -1,25 +1,32 @@
 package io.github.tiagoiwamoto.entrypoint;
 
+import io.github.tiagoiwamoto.core.PaymentUsecase;
 import io.github.tiagoiwamoto.entrypoint.dto.PaymentRequest;
 import io.github.tiagoiwamoto.entrypoint.dto.PaymentSummary;
 import io.github.tiagoiwamoto.entrypoint.dto.SummaryDetails;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.UUID;
 
 @Path("/payments")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PaymentEntrypoint {
 
+    @Inject
+    private PaymentUsecase usecase;
+
     @POST
     public Response processPayment(PaymentRequest paymentRequest) {
         if (paymentRequest.correlationId() == null || paymentRequest.amount() == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid request").build();
         }
+
+        usecase.sendData(paymentRequest);
 
         // Simulação de processamento do pagamento
         return Response.status(Response.Status.ACCEPTED).entity("Payment processed").build();
