@@ -32,4 +32,8 @@ public class PaymentProcessorDefaultAdapter implements PaymentProcessorStrategy 
         return response;
     }
 
+    public Boolean supports(String server, Integer maxAttempts) {
+        return "DEFAULT".equals(server);
+    }
+
 }

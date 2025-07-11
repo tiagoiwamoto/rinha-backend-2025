@@ -4,6 +4,7 @@ import io.github.tiagoiwamoto.config.GlobalConfig;
 import io.github.tiagoiwamoto.core.PaymentUsecase;
 import io.github.tiagoiwamoto.entrypoint.dto.PaymentRequest;
 import io.quarkus.scheduler.Scheduled;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ public class HealthCheckAdapter {
     @Inject
     PaymentUsecase usecase;
 
-    @Scheduled(every = "1s") // Executa a cada 10 segundos
+    @Scheduled(every = "500ms") // Executa a cada 10 segundos
     public void checkHealth() {
         try {
             // Caminho para o script.sh
@@ -55,6 +56,16 @@ public class HealthCheckAdapter {
         } catch (Exception e) {
             log.error("Falha ao executar script, uma nova tentativa será efetuada no próximo agendamento. ERRO: {}", e.getMessage());
         }
+    }
+
+    @PostConstruct
+    public void onStartup() {
+        log.info("Aplicação iniciada. Executando configuração inicial...");
+        usecase.sendData(PaymentRequest.builder()
+                .requestedAt(LocalDateTime.now())
+                .amount(BigDecimal.valueOf(1500.0))
+                .correlationId(UUID.randomUUID())
+                .build());
     }
 
 }

@@ -15,8 +15,6 @@ public class PaymentProcessorFallbackAdapter implements PaymentProcessorStrategy
 
     public HttpResponse<ServiceHealthCheckResponse> checkServiceHealth(){
         HttpResponse<ServiceHealthCheckResponse> response = Unirest.get(BASE_URL.concat("/service-health"))
-                .queryString("fruit", "apple")
-                .queryString("droid", "R2D2")
                 .asObject(ServiceHealthCheckResponse.class);
 
         return response;
@@ -31,4 +29,7 @@ public class PaymentProcessorFallbackAdapter implements PaymentProcessorStrategy
         return response;
     }
 
+    public Boolean supports(String server, Integer maxAttempts) {
+        return "FALLBACK".equals(server) && maxAttempts.equals(3);
+    }
 }

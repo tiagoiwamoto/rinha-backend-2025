@@ -12,4 +12,6 @@ public interface PaymentProcessorStrategy {
 
     HttpResponse<PaymentProcessResponse> processPayment(PaymentRequest payload);
 
+    Boolean supports(String server, Integer maxAttempts);
+
 }
